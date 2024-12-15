@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einwohnersuche</title>
+    <style>
+      
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b2f3a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .delete-icon {
+    width: 30px; 
+    height: 30px;
+    cursor: pointer;
+    margin-left: 10px; 
+    position: relative;
+    top: 10px; 
+}
+
+
+ .details-card h3 {
+        background-color: #3a3f4d;
+        padding: 10px;
+        border-radius: 5px;
+        color: rgb(175, 168, 168);
+    }
+
+   
+    .details-card.notes h3 {
+        background-color: #3a3f4d;
+        padding: 10px;
+        border-radius: 5px;
+        color: rgb(175, 168, 168);
+    }
+
+
+    /* Stift-Bild */
+    .edit-icon {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        margin-left: 10px;
+        position: relative;
+        top: 10px;
+    }
+
+        .dashboard {
+            display: flex;
+        }
+
+        .dashboard-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .sidebar {
+            width: 80px;
+            background-color: #1c1f26;
+            padding: 20px 0;
+            height: 100vh;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-item img {
+            width: 40px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+        }
+
+        .search {
+            margin-top: 30px;
+        }
+
+        .search-bar-container {
+            display: flex;
+            align-items: center;
+            background-color: #1e222b;
+            border-radius: 5px;
+            border: 1px solid #444;
+            padding: 5px 10px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-bar-container img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .search-bar {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            background: none;
+            color: white;
+        }
+
+        .search-bar:focus {
+            outline: none;
+        }
+
+        .suggestion-list {
+            margin-top: 10px;
+            max-width: 600px;
+            margin: 10px auto 0;
+            background-color: #1e222b;
+            border: 1px solid #444;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #444;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: #444;
+        }
+
+        .details-container {
+    display: none;
+    padding: 20px;
+    background-color: #1e222b;
+    border-radius: 8px;
+    border: 1px solid #444;
+    margin-top: 50px; 
+}
+
+        .details-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-right: 20px;
+        }
+
+        .details-header h2 {
+            margin: 0;
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .details-card {
+            background-color: #2b2f3a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .details-card h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .details-card p {
+            margin: 5px 0;
+        }
+
+        .notes {
+            grid-column: span 3;
+        }
+
+        .add-button {
+            cursor: pointer;
+            color: rgb(29, 29, 29);
+            font-size: 24px;
+            font-weight: bold;
+            background: none;
+            border: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+        }
+        #license-input, #note-input, #criminal-record-input {
+    background-color: #2b2f3a; 
+    color: white; 
+    border: 1px solid #444; 
+    border-radius: 5px; 
+    padding: 8px; 
+    font-size: 16px; 
+}
+
+#save-license, #save-note, #save-criminal-record {
+    background-color: rgb(13, 98, 226);
+    color: white; 
+    border: 1px solid rgb(13, 98, 226);
+    border-radius: 5px;
+    padding: 8px; 
+    cursor: pointer; 
+}
+
+#save-license:hover, #save-note:hover #save-criminal-record:hover {
+    background-color: rgb(13, 98, 226);
+}
+
+        .input-container button {
+            padding: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+    
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485071667261/crvt.co-star-solid.png?ex=6754516e&is=6752ffee&hm=85150da888a6a61430e1344d76cdb4166deb365d5926683bfd6c926093d46883&" alt="Icon">
+                </a>
+                <a href="einwohnersuche.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485503553636/crvt.co-bxs-user.png?ex=6754516e&is=6752ffee&hm=5e36b52918c0d6d5a62fc8331eef1bc28c2239708bd70ba48b5697ab079b2824&" alt="Icon">
+                </a>
+                <a href="fahrzeugsuche.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485298028554/crvt.co-bxs-truck.png?ex=6754516e&is=6752ffee&hm=1f35c817aede3bbe7582c55bacc6763dc54f8f4480b67b0340c64847258599bd&" alt="Icon">
+                </a>
+                <a href="einstellungen.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588484840853524/crvt.co-cog-8-tooth-20-solid.png?ex=6754516e&is=6752ffee&hm=31a0c348c9797a21f27ef727e60b2c6ad4904116ada2e7fdb1dba10b0e75fb2c&" alt="Icon">
+                </a>
+               
+            </nav>
+        </aside>
+
+        
+        <div class="content">
+            <header class="dashboard-header">
+                <h1>Einwohner | Suche</h1>
+            </header>
+            <section id="search-container" class="search">
+                <div class="search-bar-container">
+                    <img src="https://cdn.discordapp.com/attachments/1193016571115876393/1314593442407383100/crvt.co-search-alt-2.png?ex=6754560c&is=6753048c&hm=a6a05dde0ba57feec3c506bc5f97ff5515883ea9f2727e2abbc0c50637537429&" alt="Search Icon">
+                    <input type="text" id="search-bar" class="search-bar" placeholder="Einwohnersuche">
+                </div>
+                <div id="suggestion-list" class="suggestion-list"></div>
+            </section>
+
+            <section id="details-container" class="details-container">
+                <div class="details-header">
+                    <button class="back-button" id="back-button">←</button>
+                    <h2>Benutzerinformationen</h2>
+                </div>
+                <div class="details-content">
+                    <div class="details-card">
+                        <h3>Personeninformationen</h3>
+                        <p id="user-name"></p>
+                        <p id="user-birth"></p>
+                        <p id="user-gender"></p>
+                    </div>
+                    <div class="details-card">
+                        <h3>Lizenzen <button class="add-button" id="add-license"></button></h3>
+                        <ul id="user-licenses"></ul>
+                        <div id="license-input-container" class="input-container hidden">
+                            <input type="text" id="license-input" placeholder="Neue Lizenz hinzufügen">
+                            <button id="save-license">Speichern</button>
+                        </div>
+                    </div>
+                    <div class="details-card">
+                        <h3>Kontaktdaten</h3>
+                        <p id="user-contact"></p>
+                    </div>
+                    <div class="details-card notes">
+                        <h3>Notizen <button class="add-button" id="add-note">+</button></h3>
+                        <ul id="user-notes"></ul>
+                        <div id="note-input-container" class="input-container hidden">
+                            <input type="text" id="note-input" placeholder="Neue Notiz hinzufügen">
+                            <button id="save-note">Speichern</button>
+                        </div>
+                    </div>
+                    <div class="details-card">
+                        <h3>Strafregister <button class="add-button" id="add-criminal-record"></button></h3>
+                        <ul id="user-criminal-records"></ul>
+                        <div id="criminal-record-input-container" class="input-container hidden">
+                            <input type="text" id="criminal-record-input" placeholder="Neues Vergehen hinzufügen">
+                            <button id="save-criminal-record">Speichern</button>
+                        </div>
+                    </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const searchContainer = document.getElementById("search-container");
+     const detailsContainer = document.getElementById("details-container");
+     const searchBar = document.getElementById("search-bar");
+     const suggestionList = document.getElementById("suggestion-list");
+     const backButton = document.getElementById("back-button");
+     
+     const addLicenseButton = document.getElementById("add-license");
+     const licenseInputContainer = document.getElementById("license-input-container");
+     const licenseInput = document.getElementById("license-input");
+     const saveLicenseButton = document.getElementById("save-license");
+     const licenseList = document.getElementById("user-licenses");
+     
+     const addNoteButton = document.getElementById("add-note");
+     const noteInputContainer = document.getElementById("note-input-container");
+     const noteInput = document.getElementById("note-input");
+     const saveNoteButton = document.getElementById("save-note");
+     const noteList = document.getElementById("user-notes");
+
+     const addCriminalRecordButton = document.getElementById("add-criminal-record");
+const criminalRecordInputContainer = document.getElementById("criminal-record-input-container");
+const criminalRecordInput = document.getElementById("criminal-record-input");
+const saveCriminalRecordButton = document.getElementById("save-criminal-record");
+const criminalRecordList = document.getElementById("user-criminal-records");
+
+
+     
+     let users = [];
+     
+   
+     fetch("user.json")
+         .then(response => response.json())
+         .then(data => {
+             users = data;
+         })
+         .catch(error => console.error("Fehler beim Laden der Daten:", error));
+     
+     searchBar.addEventListener("input", () => {
+         const query = searchBar.value.toLowerCase();
+         suggestionList.innerHTML = "";
+     
+         if (query) {
+             const filteredUsers = users.filter(user =>
+                 user.vorname.toLowerCase().includes(query) ||
+                 user.nachname.toLowerCase().includes(query)
+             );
+     
+             filteredUsers.forEach(user => {
+                 const listItem = document.createElement("div");
+                 listItem.className = "suggestion-item";
+                 listItem.textContent = `${user.vorname} ${user.nachname}`;
+                 suggestionList.appendChild(listItem);
+     
+               
+                 listItem.addEventListener("click", () => {
+                     showDetails(user);
+                 });
+             });
+         }
+     });
+     
+     function showDetails(user) {
+    document.getElementById("user-name").textContent = `Name: ${user.vorname} ${user.nachname}`;
+    document.getElementById("user-birth").textContent = `Geburtsdatum: ${user.geburtsdatum}`;
+    document.getElementById("user-gender").textContent = `Geschlecht: ${user.geschlecht}`;
+    document.getElementById("user-contact").textContent = `Kontakt: ${user.email}, ${user.telefonnummer}`;
+
+    licenseList.innerHTML = "";  
+    noteList.innerHTML = "";  
+    criminalRecordList.innerHTML = ""; 
+ 
+    user.lizenzen.forEach((license, index) => {
+        const listItem = document.createElement("li");
+        const licenseText = license.split(": ")[1];  
+        listItem.textContent = licenseText;
+
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteLicense(user, index));
+
+        listItem.appendChild(deleteIcon);
+        licenseList.appendChild(listItem);
+    });
+
+  
+    user.strafen.forEach((record, index) => {
+        const listItem = document.createElement("li");
+        const recordText = record.split(": ")[1];  
+        listItem.textContent = recordText;
+
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteCriminalRecord(user, index));
+
+        listItem.appendChild(deleteIcon);
+        criminalRecordList.appendChild(listItem);
+    });
+
+   
+    user.notizen.forEach((note, index) => {
+        const listItem = document.createElement("li");
+        const noteText = note.split(": ")[1];  
+        listItem.textContent = noteText;
+
+      
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteNote(user, index));
+
+        listItem.appendChild(deleteIcon);
+        noteList.appendChild(listItem);
+    });
+
+    searchContainer.style.display = "none";
+    detailsContainer.style.display = "block";
+}
+     //-----------------------------------------------------------------------------------
+    
+     addNoteButton.addEventListener("click", () => {
+         noteInputContainer.classList.toggle("hidden");
+     });
+     
+     saveNoteButton.addEventListener("click", () => {
+         const newNote = noteInput.value.trim();
+         if (newNote) {
+             const user = users[0]; 
+             const noteCount = user.notizen.length; 
+             const newNoteLabel = `notizen${noteCount + 1}`; 
+             user.notizen.push(newNoteLabel + ": " + newNote); 
+     
+             const listItem = document.createElement("li");
+             listItem.textContent = newNote;  
+     
+            
+             const deleteIcon = document.createElement("img");
+             deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+             deleteIcon.alt = "Delete";
+             deleteIcon.className = "delete-icon";
+             deleteIcon.addEventListener("click", () => deleteNote(user, user.notizen.length - 1));
+     
+             listItem.appendChild(deleteIcon);
+             noteList.appendChild(listItem);
+     
+             noteInput.value = "";
+             noteInputContainer.classList.add("hidden");
+     
+             
+             saveUserData(user);
+         }
+     });
+
+     
+addCriminalRecordButton.addEventListener("click", () => {
+    criminalRecordInputContainer.classList.toggle("hidden");
+});
+
+saveCriminalRecordButton.addEventListener("click", () => {
+    const newCriminalRecord = criminalRecordInput.value.trim();
+    if (newCriminalRecord) {
+        const user = users[0]; 
+        const recordCount = user.strafen.length; 
+        const newCriminalRecordLabel = `strafen${recordCount + 1}`;
+        user.strafen.push(newCriminalRecordLabel + ": " + newCriminalRecord); 
+
+        const listItem = document.createElement("li");
+        listItem.textContent = newCriminalRecord;  
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteCriminalRecord(user, user.strafen.length - 1));
+
+        listItem.appendChild(deleteIcon);
+        criminalRecordList.appendChild(listItem);
+
+        criminalRecordInput.value = "";
+        criminalRecordInputContainer.classList.add("hidden");
+
+       
+        saveUserData(user);
+    }
+});
+     
+    
+     addLicenseButton.addEventListener("click", () => {
+         licenseInputContainer.classList.toggle("hidden");
+     });
+     
+     saveLicenseButton.addEventListener("click", () => {
+         const newLicense = licenseInput.value.trim();
+         if (newLicense) {
+             const user = users[0]; 
+             const licenseCount = user.lizenzen.length; 
+             const newLicenseLabel = `lizenz${licenseCount + 1}`; 
+             user.lizenzen.push(newLicenseLabel + ": " + newLicense); 
+     
+             const listItem = document.createElement("li");
+             listItem.textContent = newLicense;  
+     
+             
+             const deleteIcon = document.createElement("img");
+             deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+             deleteIcon.alt = "Delete";
+             deleteIcon.className = "delete-icon";
+             deleteIcon.addEventListener("click", () => deleteLicense(user, user.lizenzen.length - 1));
+     
+             listItem.appendChild(deleteIcon);
+             licenseList.appendChild(listItem);
+     
+             licenseInput.value = "";
+             licenseInputContainer.classList.add("hidden");
+     
+            
+             saveUserData(user);
+         }
+     });
+     
+     backButton.addEventListener("click", () => {
+         searchContainer.style.display = "block";
+         detailsContainer.style.display = "none";
+     });
+     
+    
+     function deleteNote(user, index) {
+         user.notizen.splice(index, 1);  
+         saveUserData(user);  
+         showDetails(user);  
+     }
+     
+    
+     function deleteLicense(user, index) {
+         user.lizenzen.splice(index, 1);  
+         saveUserData(user);  
+         showDetails(user);  
+     }
+
+
+function deleteCriminalRecord(user, index) {
+    user.strafen.splice(index, 1);  
+    saveUserData(user);  
+    showDetails(user); 
+}
+     
+    
+     function saveUserData(user) {
+         fetch("/save-user", {
+             method: "POST",
+             headers: {
+                 "Content-Type": "application/json"
+             },
+             body: JSON.stringify(user)
+         })
+         .then(response => response.text())
+         .then(message => {
+             console.log(message); 
+         })
+         .catch(error => {
+             console.error("Fehler beim Speichern der Daten:", error);
+         });
+     }
+     </script>
+      
+</body>
+</html>

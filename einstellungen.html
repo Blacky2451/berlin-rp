@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einstellungen</title>
+    <style>
+       
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b2f3a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 80px;
+            background-color: #1c1f26;
+            padding: 20px 0;
+            height: 100vh;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-item img {
+            width: 40px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+        }
+
+        .dashboard-header h1 {
+            font-size: 24px;
+            margin: 0;
+            color: rgb(255, 255, 255);
+        }
+
+        #logoutButton {
+            background-color: rgb(13, 98, 226);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #logoutButton:hover {
+            background-color: rgb(10, 80, 185);
+        }
+
+        .user-info {
+            font-size: 18px;
+            color: #ddd;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+      
+        <aside class="sidebar">
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485071667261/crvt.co-star-solid.png?ex=6754516e&is=6752ffee&hm=85150da888a6a61430e1344d76cdb4166deb365d5926683bfd6c926093d46883&" alt="Icon">
+                </a>
+                <a href="einwohnersuche.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485503553636/crvt.co-bxs-user.png?ex=6754516e&is=6752ffee&hm=5e36b52918c0d6d5a62fc8331eef1bc28c2239708bd70ba48b5697ab079b2824&" alt="Icon">
+                </a>
+                <a href="fahrzeugsuche.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588485298028554/crvt.co-bxs-truck.png?ex=6754516e&is=6752ffee&hm=1f35c817aede3bbe7582c55bacc6763dc54f8f4480b67b0340c64847258599bd&" alt="Icon">
+                </a>
+                <a href="einstellungen.html" class="menu-item">
+                    <img src="https://cdn.discordapp.com/attachments/1306339918645166100/1314588484840853524/crvt.co-cog-8-tooth-20-solid.png?ex=6754516e&is=6752ffee&hm=31a0c348c9797a21f27ef727e60b2c6ad4904116ada2e7fdb1dba10b0e75fb2c&" alt="Icon">
+                </a>
+              
+            </nav>
+        </aside>
+
+       
+        <div class="content">
+            <header class="dashboard-header">
+                <h1>Einstellungen</h1>
+            </header>
+            <div id="content">
+               
+            </div>
+            <button id="logoutButton">Logout</button>
+        </div>
+    </div>
+
+    <script>
+       
+        const contentDiv = document.getElementById("content");
+
+       
+        const username = localStorage.getItem("username");
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+        if (isLoggedIn === "true" && username) {
+          
+            contentDiv.innerHTML = `<div class="user-info">Eingeloggt als: <strong>${username}</strong></div>`;
+        } else {
+           
+            contentDiv.innerHTML = `<div class="error-message">Du bist nicht eingeloggt. Bitte melde dich <a href="index.html" style="color: rgb(13, 98, 226);">hier</a> an.</div>`;
+        }
+
+        document.getElementById("logoutButton").addEventListener("click", function() {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("username");
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+</html>
+
