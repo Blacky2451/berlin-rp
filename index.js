@@ -13,10 +13,7 @@ const usersFile = path.join(__dirname, 'public', 'user.json');
 // Benutzerdaten laden
 app.get('/users', (req, res) => {
     fs.readFile(usersFile, 'utf-8', (err, data) => {
-        if (err) {
-            console.error('Fehler beim Lesen der Datei:', err);
-            return res.status(500).send('Fehler beim Laden der Benutzerdaten');
-        }
+        if (err) return res.status(500).send('Fehler beim Laden der Benutzerdaten');
         res.json(JSON.parse(data));
     });
 });
@@ -24,24 +21,17 @@ app.get('/users', (req, res) => {
 // Änderungen an Benutzerdaten speichern
 app.post('/save-user', (req, res) => {
     const updatedUser = req.body;
-
+    
     fs.readFile(usersFile, 'utf-8', (err, data) => {
-        if (err) {
-            console.error('Fehler beim Lesen der Benutzerdaten:', err);
-            return res.status(500).send('Fehler beim Laden der Benutzerdaten');
-        }
-
+        if (err) return res.status(500).send('Fehler beim Laden der Benutzerdaten');
+        
         let users = JSON.parse(data);
         const userIndex = users.findIndex(u => u.vorname === updatedUser.vorname && u.nachname === updatedUser.nachname);
-
+        
         if (userIndex !== -1) {
             users[userIndex] = updatedUser;
-
-            fs.writeFile(usersFile, JSON.stringify(users, null, 2), (err) => {
-                if (err) {
-                    console.error('Fehler beim Speichern der Datei:', err);
-                    return res.status(500).send('Fehler beim Speichern der Benutzerdaten');
-                }
+            fs.writeFile(usersFile, JSON.stringify(users, null, 2), err => {
+                if (err) return res.status(500).send('Fehler beim Speichern der Benutzerdaten');
                 res.send('Benutzerdaten erfolgreich gespeichert');
             });
         } else {
@@ -50,8 +40,36 @@ app.post('/save-user', (req, res) => {
     });
 });
 
-// Starten des Servers
-app.listen(PORT, () => {
-    console.log(`Server läuft unter http://localhost:${PORT}`);
+// Route zum Speichern eines neuen Fahrzeugs
+app.post('/add-vehicle', (req, res) => {
+    const newVehicle = req.body;
+
+    // Pfad zur fahrzeuge.json
+    const vehiclesFilePath = path.join(__dirname, 'fahrzeuge.json');
+
+    // Lese die aktuelle Fahrzeugdatei
+    fs.readFile(vehiclesFilePath, 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Fehler beim Laden der Fahrzeugdaten');
+        }
+
+        // Parse die Daten
+        const vehicles = JSON.parse(data);
+
+        // Füge das neue Fahrzeug zur Liste hinzu
+        vehicles.push(newVehicle);
+
+        // Schreibe die aktualisierten Daten in die JSON-Datei
+        fs.writeFile(vehiclesFilePath, JSON.stringify(vehicles, null, 2), 'utf8', (err) => {
+            if (err) {
+                return res.status(500).send('Fehler beim Speichern des Fahrzeugs');
+            }
+            res.status(200).send('Fahrzeug erfolgreich hinzugefügt!');
+        });
+    });
 });
 
+// Starten des Servers
+app.listen(PORT, () => {
+    console.log(Server is running on http://localhost:${PORT});
+});
