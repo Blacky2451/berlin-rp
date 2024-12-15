@@ -355,36 +355,45 @@ const noteList = document.getElementById("user-notes");
 let users = [];
 let currentUser = null;
 
-// Benutzer laden
 fetch("/users")
     .then(response => response.json())
     .then(data => {
         users = data;
-        console.log("Benutzerdaten geladen:", users);
+        console.log("Benutzerdaten geladen:", users); // Debug-Ausgabe
     })
     .catch(error => console.error("Fehler beim Laden der Benutzerdaten:", error));
 
-// Suche und Vorschläge
+
 searchBar.addEventListener("input", () => {
-    const query = searchBar.value.toLowerCase();
-    suggestionList.innerHTML = "";
+    const query = searchBar.value.toLowerCase().trim(); // Trim entfernt Leerzeichen
+    suggestionList.innerHTML = ""; // Vorschläge zurücksetzen
 
     if (query) {
         const filteredUsers = users.filter(user =>
-            user.vorname.toLowerCase().includes(query) ||
-            user.nachname.toLowerCase().includes(query)
+            user.vorname.toLowerCase().includes(query) || // Suche im Vornamen
+            user.nachname.toLowerCase().includes(query)  // Suche im Nachnamen
         );
 
-        filteredUsers.forEach(user => {
-            const listItem = document.createElement("div");
-            listItem.className = "suggestion-item";
-            listItem.textContent = `${user.vorname} ${user.nachname}`;
-            suggestionList.appendChild(listItem);
+        if (filteredUsers.length === 0) {
+            // Keine Ergebnisse gefunden
+            const noResult = document.createElement("div");
+            noResult.className = "no-suggestion";
+            noResult.textContent = "Keine Treffer gefunden";
+            suggestionList.appendChild(noResult);
+        } else {
+            // Ergebnisse hinzufügen
+            filteredUsers.forEach(user => {
+                const listItem = document.createElement("div");
+                listItem.className = "suggestion-item";
+                listItem.textContent = `${user.vorname} ${user.nachname}`;
+                suggestionList.appendChild(listItem);
 
-            listItem.addEventListener("click", () => {
-                showDetails(user);
+                // Klick-Event für Vorschlag
+                listItem.addEventListener("click", () => {
+                    showDetails(user);
+                });
             });
-        });
+        }
     }
 });
 
