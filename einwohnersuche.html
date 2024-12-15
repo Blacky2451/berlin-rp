@@ -333,162 +333,275 @@
 
     <script>
         const searchContainer = document.getElementById("search-container");
-const detailsContainer = document.getElementById("details-container");
-const searchBar = document.getElementById("search-bar");
-const suggestionList = document.getElementById("suggestion-list");
+     const detailsContainer = document.getElementById("details-container");
+     const searchBar = document.getElementById("search-bar");
+     const suggestionList = document.getElementById("suggestion-list");
+     const backButton = document.getElementById("back-button");
+     
+     const addLicenseButton = document.getElementById("add-license");
+     const licenseInputContainer = document.getElementById("license-input-container");
+     const licenseInput = document.getElementById("license-input");
+     const saveLicenseButton = document.getElementById("save-license");
+     const licenseList = document.getElementById("user-licenses");
+     
+     const addNoteButton = document.getElementById("add-note");
+     const noteInputContainer = document.getElementById("note-input-container");
+     const noteInput = document.getElementById("note-input");
+     const saveNoteButton = document.getElementById("save-note");
+     const noteList = document.getElementById("user-notes");
 
-const licenseInputContainer = document.getElementById("license-input-container");
-const licenseInput = document.getElementById("license-input");
-const saveLicenseButton = document.getElementById("save-license");
-const licenseList = document.getElementById("user-licenses");
-
+     const addCriminalRecordButton = document.getElementById("add-criminal-record");
 const criminalRecordInputContainer = document.getElementById("criminal-record-input-container");
 const criminalRecordInput = document.getElementById("criminal-record-input");
 const saveCriminalRecordButton = document.getElementById("save-criminal-record");
 const criminalRecordList = document.getElementById("user-criminal-records");
 
-const noteInputContainer = document.getElementById("note-input-container");
-const noteInput = document.getElementById("note-input");
-const saveNoteButton = document.getElementById("save-note");
-const noteList = document.getElementById("user-notes");
 
-let users = [];
-let currentUser = null;
-
-fetch("/users")
-    .then(response => response.json())
-    .then(data => {
-        users = data;
-        console.log("Benutzerdaten geladen:", users); // Debug-Ausgabe
-    })
-    .catch(error => console.error("Fehler beim Laden der Benutzerdaten:", error));
-
-
-searchBar.addEventListener("input", () => {
-    const query = searchBar.value.toLowerCase().trim(); // Trim entfernt Leerzeichen
-    suggestionList.innerHTML = ""; // Vorschläge zurücksetzen
-
-    if (query) {
-        const filteredUsers = users.filter(user =>
-            user.vorname.toLowerCase().includes(query) || // Suche im Vornamen
-            user.nachname.toLowerCase().includes(query)  // Suche im Nachnamen
-        );
-
-        if (filteredUsers.length === 0) {
-            // Keine Ergebnisse gefunden
-            const noResult = document.createElement("div");
-            noResult.className = "no-suggestion";
-            noResult.textContent = "Keine Treffer gefunden";
-            suggestionList.appendChild(noResult);
-        } else {
-            // Ergebnisse hinzufügen
-            filteredUsers.forEach(user => {
-                const listItem = document.createElement("div");
-                listItem.className = "suggestion-item";
-                listItem.textContent = `${user.vorname} ${user.nachname}`;
-                suggestionList.appendChild(listItem);
-
-                // Klick-Event für Vorschlag
-                listItem.addEventListener("click", () => {
-                    showDetails(user);
-                });
-            });
-        }
-    }
-});
-
-// Benutzer-Details anzeigen
-function showDetails(user) {
-    currentUser = user;
-
+     
+     let users = [];
+     
+   
+     fetch("user.json")
+         .then(response => response.json())
+         .then(data => {
+             users = data;
+         })
+         .catch(error => console.error("Fehler beim Laden der Daten:", error));
+     
+     searchBar.addEventListener("input", () => {
+         const query = searchBar.value.toLowerCase();
+         suggestionList.innerHTML = "";
+     
+         if (query) {
+             const filteredUsers = users.filter(user =>
+                 user.vorname.toLowerCase().includes(query) ||
+                 user.nachname.toLowerCase().includes(query)
+             );
+     
+             filteredUsers.forEach(user => {
+                 const listItem = document.createElement("div");
+                 listItem.className = "suggestion-item";
+                 listItem.textContent = `${user.vorname} ${user.nachname}`;
+                 suggestionList.appendChild(listItem);
+     
+               
+                 listItem.addEventListener("click", () => {
+                     showDetails(user);
+                 });
+             });
+         }
+     });
+     
+     function showDetails(user) {
     document.getElementById("user-name").textContent = `Name: ${user.vorname} ${user.nachname}`;
     document.getElementById("user-birth").textContent = `Geburtsdatum: ${user.geburtsdatum}`;
     document.getElementById("user-gender").textContent = `Geschlecht: ${user.geschlecht}`;
     document.getElementById("user-contact").textContent = `Kontakt: ${user.email}, ${user.telefonnummer}`;
 
-    renderList(user.lizenzen, licenseList, "Lizenz");
-    renderList(user.strafen, criminalRecordList, "Strafe");
-    renderList(user.notizen, noteList, "Notiz");
+    licenseList.innerHTML = "";  
+    noteList.innerHTML = "";  
+    criminalRecordList.innerHTML = ""; 
+ 
+    user.lizenzen.forEach((license, index) => {
+        const listItem = document.createElement("li");
+        const licenseText = license.split(": ")[1];  
+        listItem.textContent = licenseText;
+
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteLicense(user, index));
+
+        listItem.appendChild(deleteIcon);
+        licenseList.appendChild(listItem);
+    });
+
+  
+    user.strafen.forEach((record, index) => {
+        const listItem = document.createElement("li");
+        const recordText = record.split(": ")[1];  
+        listItem.textContent = recordText;
+
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteCriminalRecord(user, index));
+
+        listItem.appendChild(deleteIcon);
+        criminalRecordList.appendChild(listItem);
+    });
+
+   
+    user.notizen.forEach((note, index) => {
+        const listItem = document.createElement("li");
+        const noteText = note.split(": ")[1];  
+        listItem.textContent = noteText;
+
+      
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteNote(user, index));
+
+        listItem.appendChild(deleteIcon);
+        noteList.appendChild(listItem);
+    });
 
     searchContainer.style.display = "none";
     detailsContainer.style.display = "block";
 }
+     //-----------------------------------------------------------------------------------
+    
+     addNoteButton.addEventListener("click", () => {
+         noteInputContainer.classList.toggle("hidden");
+     });
+     
+     saveNoteButton.addEventListener("click", () => {
+         const newNote = noteInput.value.trim();
+         if (newNote) {
+             const user = users[0]; 
+             const noteCount = user.notizen.length; 
+             const newNoteLabel = `notizen${noteCount + 1}`; 
+             user.notizen.push(newNoteLabel + ": " + newNote); 
+     
+             const listItem = document.createElement("li");
+             listItem.textContent = newNote;  
+     
+            
+             const deleteIcon = document.createElement("img");
+             deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+             deleteIcon.alt = "Delete";
+             deleteIcon.className = "delete-icon";
+             deleteIcon.addEventListener("click", () => deleteNote(user, user.notizen.length - 1));
+     
+             listItem.appendChild(deleteIcon);
+             noteList.appendChild(listItem);
+     
+             noteInput.value = "";
+             noteInputContainer.classList.add("hidden");
+     
+             
+             saveUserData(user);
+         }
+     });
 
-// Liste rendern
-function renderList(items, listElement, type) {
-    listElement.innerHTML = "";
-
-    items.forEach((item, index) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = item;
-
-        const deleteIcon = document.createElement("button");
-        deleteIcon.textContent = "❌";
-        deleteIcon.addEventListener("click", () => {
-            items.splice(index, 1);
-            saveUserData(currentUser, `Element aus ${type} entfernt`);
-        });
-
-        listItem.appendChild(deleteIcon);
-        listElement.appendChild(listItem);
-    });
-}
-
-// Lizenz hinzufügen
-saveLicenseButton.addEventListener("click", () => {
-    const newLicense = licenseInput.value.trim();
-    if (newLicense && currentUser) {
-        currentUser.lizenzen.push(newLicense);
-        saveUserData(currentUser, "Neue Lizenz hinzugefügt");
-        licenseInput.value = "";
-    }
+     
+addCriminalRecordButton.addEventListener("click", () => {
+    criminalRecordInputContainer.classList.toggle("hidden");
 });
 
-// Strafe hinzufügen
 saveCriminalRecordButton.addEventListener("click", () => {
     const newCriminalRecord = criminalRecordInput.value.trim();
-    if (newCriminalRecord && currentUser) {
-        currentUser.strafen.push(newCriminalRecord);
-        saveUserData(currentUser, "Neue Strafe hinzugefügt");
+    if (newCriminalRecord) {
+        const user = users[0]; 
+        const recordCount = user.strafen.length; 
+        const newCriminalRecordLabel = `strafen${recordCount + 1}`;
+        user.strafen.push(newCriminalRecordLabel + ": " + newCriminalRecord); 
+
+        const listItem = document.createElement("li");
+        listItem.textContent = newCriminalRecord;  
+       
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+        deleteIcon.alt = "Delete";
+        deleteIcon.className = "delete-icon";
+        deleteIcon.addEventListener("click", () => deleteCriminalRecord(user, user.strafen.length - 1));
+
+        listItem.appendChild(deleteIcon);
+        criminalRecordList.appendChild(listItem);
+
         criminalRecordInput.value = "";
+        criminalRecordInputContainer.classList.add("hidden");
+
+       
+        saveUserData(user);
     }
 });
+     
+    
+     addLicenseButton.addEventListener("click", () => {
+         licenseInputContainer.classList.toggle("hidden");
+     });
+     
+     saveLicenseButton.addEventListener("click", () => {
+         const newLicense = licenseInput.value.trim();
+         if (newLicense) {
+             const user = users[0]; 
+             const licenseCount = user.lizenzen.length; 
+             const newLicenseLabel = `lizenz${licenseCount + 1}`; 
+             user.lizenzen.push(newLicenseLabel + ": " + newLicense); 
+     
+             const listItem = document.createElement("li");
+             listItem.textContent = newLicense;  
+     
+             
+             const deleteIcon = document.createElement("img");
+             deleteIcon.src = "https://cdn.discordapp.com/attachments/1193016571115876393/1314661683536461894/crvt.co-trash-solid.png?ex=6754959a&is=6753441a&hm=374584a14f3f4ea033e72b0f82cbbccfef0dac5cd5c7cdb4178ed25df2beec86&";
+             deleteIcon.alt = "Delete";
+             deleteIcon.className = "delete-icon";
+             deleteIcon.addEventListener("click", () => deleteLicense(user, user.lizenzen.length - 1));
+     
+             listItem.appendChild(deleteIcon);
+             licenseList.appendChild(listItem);
+     
+             licenseInput.value = "";
+             licenseInputContainer.classList.add("hidden");
+     
+            
+             saveUserData(user);
+         }
+     });
+     
+     backButton.addEventListener("click", () => {
+         searchContainer.style.display = "block";
+         detailsContainer.style.display = "none";
+     });
+     
+    
+     function deleteNote(user, index) {
+         user.notizen.splice(index, 1);  
+         saveUserData(user);  
+         showDetails(user);  
+     }
+     
+    
+     function deleteLicense(user, index) {
+         user.lizenzen.splice(index, 1);  
+         saveUserData(user);  
+         showDetails(user);  
+     }
 
-// Notiz hinzufügen
-saveNoteButton.addEventListener("click", () => {
-    const newNote = noteInput.value.trim();
-    if (newNote && currentUser) {
-        currentUser.notizen.push(newNote);
-        saveUserData(currentUser, "Neue Notiz hinzugefügt");
-        noteInput.value = "";
-    }
-});
 
-// Benutzer speichern
-function saveUserData(user, successMessage) {
-    fetch("/save-user", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(user)
-    })
-        .then(response => response.text())
-        .then(message => {
-            console.log(message);
-            alert(successMessage || "Daten erfolgreich gespeichert");
-            showDetails(user);
-        })
-        .catch(error => console.error("Fehler beim Speichern:", error));
+function deleteCriminalRecord(user, index) {
+    user.strafen.splice(index, 1);  
+    saveUserData(user);  
+    showDetails(user); 
 }
-
-// Zurück zur Suche
-document.getElementById("back-button").addEventListener("click", () => {
-    detailsContainer.style.display = "none";
-    searchContainer.style.display = "block";
-});
-
+     
+    
+     function saveUserData(user) {
+         fetch("/save-user", {
+             method: "POST",
+             headers: {
+                 "Content-Type": "application/json"
+             },
+             body: JSON.stringify(user)
+         })
+         .then(response => response.text())
+         .then(message => {
+             console.log(message); 
+         })
+         .catch(error => {
+             console.error("Fehler beim Speichern der Daten:", error);
+         });
+     }
      </script>
+      
       
 </body>
 </html>
