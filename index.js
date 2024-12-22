@@ -22,10 +22,10 @@ app.get('/users', (req, res) => {
 
 // Verbindung zur Datenbank herstellen
 const pool = new Pool({
-  user: 'username',
-  host: 'your-database-host',
-  database: 'your-database-name',
-  password: 'your-password',
+  user: 'BERLIN RP',
+  host: 'dpg-ctjmkrtumphs73fc3h10-a',
+  database: 'berlinrp',
+  password: 'savVthBZmWEvsnqwBFC45WobzULeGcSu',
   port: 5432,
 });
 
