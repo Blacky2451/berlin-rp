@@ -5,10 +5,9 @@ const PORT = 3300;
 const path = require('path');
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Datei Pfad für die JSON-Daten
-const usersFile = path.join(__dirname, 'public', 'user.json');
+const usersFile = path.join(__dirname, 'user.json');
+const vehiclesFilePath = path.join(__dirname, 'fahrzeuge.json');
 
 // Benutzerdaten laden
 app.get('/users', (req, res) => {
