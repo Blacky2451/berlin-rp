@@ -25,15 +25,15 @@ body {
 .welcome-header {
     display: flex;
     align-items: center;
-    gap: 15px; /* Abstand zwischen Bild und Text */
-    margin-bottom: 20px; /* Abstand unter dem Willkommen Text */
+    gap: 15px; 
+    margin-bottom: 20px; 
 }
 
 .welcome-image {
-    width: 60px; /* Bildgröße anpassen */
-    height: 60px; /* Bildgröße anpassen */
+    width: 60px; 
+    height: 60px; 
     object-fit: cover;
-    border-radius: 50%; /* Optional: Wenn du ein rundes Bild möchtest */
+    border-radius: 50%; 
 }
 
 h2 {
@@ -64,7 +64,7 @@ button {
     cursor: pointer;
 }
 
-/* Dashboard und allgemeines Styling */
+
 .dashboard {
     display: flex;
     width: 100%;
@@ -99,7 +99,7 @@ button {
     padding: 10px;
 }
 
-/* Suchleiste */
+
 .search {
     margin-top: 30px;
 }
