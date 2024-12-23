@@ -12,7 +12,7 @@ const vehiclesFilePath = path.join(__dirname, 'fahrzeuge.json');
 
 
 
-// Benutzerdaten laden
+
 app.get('/users', (req, res) => {
     fs.readFile(usersFile, 'utf-8', (err, data) => {
         if (err) return res.status(500).send('Fehler beim Laden der Benutzerdaten');
@@ -20,7 +20,7 @@ app.get('/users', (req, res) => {
     });
 });
 
-// Verbindung zur Datenbank herstellen
+
 const pool = new Pool({
   user: 'BERLIN RP',
   host: 'dpg-ctjmkrtumphs73fc3h10-a',
@@ -49,26 +49,26 @@ app.post('/save-user', async (req, res) => {
     }
 });
 
-// Route zum Speichern eines neuen Fahrzeugs
+
 app.post('/add-vehicle', (req, res) => {
     const newVehicle = req.body;
 
-    // Pfad zur fahrzeuge.json
+   
     const vehiclesFilePath = path.join(__dirname, 'fahrzeuge.json');
 
-    // Lese die aktuelle Fahrzeugdatei
+    
     fs.readFile(vehiclesFilePath, 'utf8', (err, data) => {
         if (err) {
             return res.status(500).send('Fehler beim Laden der Fahrzeugdaten');
         }
 
-        // Parse die Daten
+     
         const vehicles = JSON.parse(data);
 
-        // Füge das neue Fahrzeug zur Liste hinzu
+       
         vehicles.push(newVehicle);
 
-        // Schreibe die aktualisierten Daten in die JSON-Datei
+     
         fs.writeFile(vehiclesFilePath, JSON.stringify(vehicles, null, 2), 'utf8', (err) => {
             if (err) {
                 return res.status(500).send('Fehler beim Speichern des Fahrzeugs');
@@ -78,7 +78,6 @@ app.post('/add-vehicle', (req, res) => {
     });
 });
 
-// Starten des Servers
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
