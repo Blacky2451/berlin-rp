@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 const PORT = 3300;
 const path = require('path');
-const { Pool } = require('pg');
 
 app.use(express.json());
 
@@ -20,14 +19,6 @@ app.get('/users', (req, res) => {
     });
 });
 
-
-const pool = new Pool({
-  user: 'BERLIN RP',
-  host: 'dpg-ctjmkrtumphs73fc3h10-a',
-  database: 'berlinrp',
-  password: 'savVthBZmWEvsnqwBFC45WobzULeGcSu',
-  port: 5432,
-});
 
 app.post('/save-user', async (req, res) => {
     const { vorname, nachname } = req.body;
