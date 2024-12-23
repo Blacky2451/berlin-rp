@@ -20,24 +20,25 @@ app.get('/users', (req, res) => {
 });
 
 
-app.post('/save-user', async (req, res) => {
-    const { vorname, nachname } = req.body;
-
-    try {
-        const result = await pool.query(
-            'UPDATE users SET data = $1 WHERE vorname = $2 AND nachname = $3 RETURNING *',
-            [req.body, vorname, nachname]
-        );
-
-        if (result.rowCount === 0) {
-            return res.status(404).send('Benutzer nicht gefunden');
+app.post('/save-user', (req, res) => {
+    const updatedUser = req.body;
+    
+    fs.readFile(usersFile, 'utf-8', (err, data) => {
+        if (err) return res.status(500).send('Fehler beim Laden der Benutzerdaten');
+        
+        let users = JSON.parse(data);
+        const userIndex = users.findIndex(u => u.vorname === updatedUser.vorname && u.nachname === updatedUser.nachname);
+        
+        if (userIndex !== -1) {
+            users[userIndex] = updatedUser;
+            fs.writeFile(usersFile, JSON.stringify(users, null, 2), err => {
+                if (err) return res.status(500).send('Fehler beim Speichern der Benutzerdaten');
+                res.send('Benutzerdaten erfolgreich gespeichert');
+            });
+        } else {
+            res.status(404).send('Benutzer nicht gefunden');
         }
-
-        res.send('Benutzerdaten erfolgreich gespeichert');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Fehler beim Speichern der Benutzerdaten');
-    }
+    });
 });
 
 
